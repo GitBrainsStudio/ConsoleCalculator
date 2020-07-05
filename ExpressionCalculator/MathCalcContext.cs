@@ -14,6 +14,9 @@ namespace ConsoleCalculator
         public MathCalcContext()
         {
             strategy_.Add("+", new Addition());
+            strategy_.Add("-", new Subtraction());
+            strategy_.Add("/", new Division());
+            strategy_.Add("*", new Multiplication());
         }
 
         public float Result(string _operator, float _result, float _number)

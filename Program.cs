@@ -26,14 +26,13 @@ namespace ConsoleCalculator
                         inputExpression = inputExpression.Replace(v.ToString(), Calc(PlusAndMinusCalc(v.Remove(0, 1).Substring(0, v.Length - 2))).ToString());
                     });
 
-
                     inputExpression = PlusAndMinusCalc(inputExpression);
 
                     Console.WriteLine("Результат: " + Calc(inputExpression));
                 }
                 catch(Exception ex)
                 {
-                    string errMessage = "Произошла непредвиденная ошибка в приложении. Администрация калькулятора, уже бежит на помощь.";
+                    string errMessage = "Произошла непредвиденная ошибка в приложении. Администрация приложения уже бежит на помощь.";
                     if (ex is FormatException || ex is ArgumentOutOfRangeException ex2)
                     {
                         errMessage = "Введённые данные не корректные! \nВалидный формат: целые и десятично-дробные числа (например: 10,2 через запятую), знаки +, -, *, / и скобки.\n";
@@ -77,25 +76,7 @@ namespace ConsoleCalculator
 
             for (int i = 0; i < operation.Count(); i++)
             {
-
                 result = calcContext.Result(operation[i], result, number[i + 1]);
-
-                //if (operation[i].Equals("+"))
-                //{
-                //    result += Convert.ToSingle(number[i+1]);
-                //}
-                //if (operation[i].Equals("-"))
-                //{
-                //    result -= Convert.ToSingle(number[i+1]);
-                //}
-                //if (operation[i].Equals("*"))
-                //{
-                //    result *= Convert.ToSingle(number[i+1]);
-                //}
-                //if (operation[i].Equals("/"))
-                //{
-                //    result /= Convert.ToSingle(number[i+1]);
-                //}
             }
             return result;
         }
@@ -134,13 +115,13 @@ namespace ConsoleCalculator
             return numbers;
         }
 
+
+        //на случай, чтобы консоль не зависла в ожидании. в любом случае, закроется.
         private static void UnhandledExceptionTrapper(object sender, UnhandledExceptionEventArgs e)
         {
-            Console.WriteLine("Я закрываюсь.");
+            Console.WriteLine("Критическая ошибка! Приложение закрывается.");
             Environment.Exit(1);
         }
-
-
 
     }
 

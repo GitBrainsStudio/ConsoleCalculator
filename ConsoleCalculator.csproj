@@ -44,16 +44,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExpressionCalculator\Addition.cs" />
+    <Compile Include="ExpressionCalculator\Division.cs" />
     <Compile Include="ExpressionCalculator\IMathCalc.cs" />
     <Compile Include="ExpressionCalculator\MathCalcContext.cs" />
+    <Compile Include="ExpressionCalculator\Multiplication.cs" />
+    <Compile Include="ExpressionCalculator\Subtraction.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
