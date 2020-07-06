@@ -9,7 +9,7 @@ namespace ConsoleCalculator
 {
     class MathCalcContext
     {
-        Dictionary<string, IMathCalc> strategy_ = new Dictionary<string, IMathCalc>();
+        readonly Dictionary<string, IMathCalc> strategy_ = new Dictionary<string, IMathCalc>();
 
         public MathCalcContext()
         {

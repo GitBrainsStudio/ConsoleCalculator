@@ -9,7 +9,7 @@ namespace ConsoleCalculator
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             System.AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
             Console.WriteLine("Добро пожаловать в калькулятор. \n\n\n");
@@ -23,12 +23,26 @@ namespace ConsoleCalculator
 
                     ExpressionInParentheses(inputExpression).ForEach(v =>
                     {
+
                         inputExpression = inputExpression.Replace(v.ToString(), Calc(PlusAndMinusCalc(v.Remove(0, 1).Substring(0, v.Length - 2))).ToString());
                     });
 
                     inputExpression = PlusAndMinusCalc(inputExpression);
 
-                    Console.WriteLine("Результат: " + Calc(inputExpression));
+
+                    inputExpression = inputExpression.Replace("+-", "-").Replace("--", "+");
+
+                    var split = inputExpression.Split("+-*/()".ToCharArray());
+
+                    if (inputExpression.Contains("*-") || inputExpression.Contains("/-"))
+                        inputExpression = PlusAndMinusCalc(inputExpression);
+
+
+
+                    if (split.Length <= 1 || (split.Length >= 2 && inputExpression[0].Equals("-"))) Console.WriteLine("Результат: " + inputExpression);
+
+                    else Console.WriteLine("Результат: " + Calc(inputExpression));
+
                 }
                 catch(Exception ex)
                 {
@@ -46,21 +60,26 @@ namespace ConsoleCalculator
         private static List<string> ExpressionInParentheses(string _mathExpression)
         {
             var regex = new Regex(@"\(([^)]*)\)");
-            return regex.Matches(_mathExpression).Cast<Match>().Select(m => m.Value).ToList();
+            var array = regex.Matches(_mathExpression).Cast<Match>().Select(m => m.Value).ToList();
+
+            return array;
         }
         
         static string PlusAndMinusCalc(string _mathExpression)
         {
             var array = _mathExpression.Split("+-)".ToCharArray());
 
-            array.ToList().ForEach(o =>
+            if (array.Length > 2)
             {
-                if (o.Split("*/".ToCharArray()).Length != 1)
+                array.ToList().ForEach(o =>
                 {
-                    var res = Calc(o);
-                    _mathExpression = _mathExpression.Replace(o, res.ToString());
-                }
-            });
+                    if (o.Split("*/".ToCharArray()).Length != 1)
+                    {
+                        var res = Calc(o);
+                        _mathExpression = _mathExpression.Replace(o, res.ToString());
+                    }
+                });
+            }
 
             return _mathExpression;
         }
@@ -72,12 +91,28 @@ namespace ConsoleCalculator
             var operation = ParseOperators(_mathExpression);
             var number = ParseNumbers(_mathExpression);
 
+            if (operation[0].Equals("-") && ( number[0] < 0 ))
+            {
+                operation.RemoveAt(0);
+            }
+
             float result = Convert.ToSingle(number[0]);
 
-            for (int i = 0; i < operation.Count(); i++)
+            if (operation.Count() > 1 && number.Count() >1)
             {
-                result = calcContext.Result(operation[i], result, number[i + 1]);
+                for (int i = 0; i < operation.Count(); i++)
+                {
+                    if (operation[i].Equals("*-")) { operation[i] = "*"; number[i + 1] = number[i + 1] * -1; }
+                    if (operation[i].Equals("/-")) { operation[i] = "/"; number[i + 1] = number[i + 1] * -1; }
+                    result = calcContext.Result(operation[i], result, number[i + 1]);
+                }
             }
+
+            else
+            {
+                result = number[0];
+            }
+
             return result;
         }
 
@@ -85,7 +120,7 @@ namespace ConsoleCalculator
         {
             var operators = new List<string>();
 
-            var array = _mathExpression.Split("0123456789".ToCharArray());
+            var array = _mathExpression.Split("0123456789()".ToCharArray());
 
             array.ToList().ForEach(operator_ =>
             {
@@ -102,6 +137,14 @@ namespace ConsoleCalculator
         {
             var numbers = new List<float>();
 
+            float? minusNumber = null;
+
+            var array2 = _mathExpression.Split("-".ToCharArray());
+            if (array2[0].Equals(""))
+            {
+                minusNumber = Convert.ToSingle(array2[1].Split("+*/()".ToCharArray())[0]) * -1;
+            }
+
             var array = _mathExpression.Split("+-*/()".ToCharArray());
 
             array.ToList().ForEach(number_ =>
@@ -111,6 +154,11 @@ namespace ConsoleCalculator
                     numbers.Add(Convert.ToSingle(number_));
                 }
             });
+
+            if (minusNumber != null)
+            {
+                numbers[0] = Convert.ToSingle(minusNumber);
+            }
 
             return numbers;
         }
